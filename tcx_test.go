@@ -1,6 +1,10 @@
 package tcx
 
-import "testing"
+import (
+	"fmt"
+
+	"testing"
+)
 
 var tcx *Tcx
 
@@ -11,4 +15,8 @@ func TestParse(t *testing.T) {
 	if err != nil {
 		t.Error("Error parsing TCX file: ", err)
 	}
+
+	fmt.Println(tcx.Activities[0].TotalDuration())
+	fmt.Println(tcx.Activities[0].AverageHeartbeat())
+	fmt.Println(tcx.Activities[0].AveragePace())
 }

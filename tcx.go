@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"time"
 )
@@ -52,6 +53,10 @@ type Trackpoint struct {
 	SpeedInMetersPerSec float64   `xml:"Extensions>TPX>Speed"`
 }
 
+type Pace struct {
+	float64
+}
+
 // Parse parses a TCX reader and return a Tcx object.
 func Parse(r io.Reader) (*Tcx, error) {
 	g := NewTcx()
@@ -82,7 +87,50 @@ func NewTcx() *Tcx {
 func (a *Activity) TotalDuration() time.Duration {
 	var duration time.Duration = 0
 	for _, l := range a.Laps {
-		duration += l.TotalTimeInSeconds * time.Second
+		duration += time.Duration(l.TotalTimeInSeconds) * time.Second
 	}
 	return duration
+}
+
+func (a *Activity) TotalDistance() float64 {
+	var d float64 = 0
+	for _, l := range a.Laps {
+		d += l.DistanceInMeters
+	}
+	return d
+}
+
+func (a *Activity) AverageHeartbeat() float64 {
+	var totalhr int = 0
+	var nbhr int = 0
+	for _, l := range a.Laps {
+		for _, p := range l.Track {
+			totalhr += p.HeartRateInBpm
+			nbhr += 1
+		}
+	}
+	return float64(totalhr) / float64(nbhr)
+}
+
+func (p *Pace) String() string {
+	intpart, fracpart := math.Modf(p.float64)
+	return fmt.Sprintf("%.f:%.f", intpart, fracpart*60)
+}
+
+func GetPaceFromSpeedInMs(speed float64) *Pace {
+	var p *Pace = new(Pace)
+	p.float64 = 50 / (speed * 3)
+	return p
+}
+
+func (a *Activity) AveragePace() *Pace {
+	var totals float64 = 0
+	var nbs int = 0
+	for _, l := range a.Laps {
+		for _, p := range l.Track {
+			totals += p.SpeedInMetersPerSec
+			nbs += 1
+		}
+	}
+	return GetPaceFromSpeedInMs(totals / float64(nbs))
 }
