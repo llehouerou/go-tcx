@@ -44,13 +44,39 @@ type Lap struct {
 }
 
 type Trackpoint struct {
-	Time                time.Time `xml:"Time"`
-	LatitudeInDegrees   float64   `xml:"LatitudeDegrees"`
-	LongitudeInDegrees  float64   `xml:"LongitudeDegrees"`
-	AltitudeInMeters    float64   `xml:"AltitudeMeters"`
-	HeartRateInBpm      int       `xml:"HeartRateBpm>Value"`
-	Cadence             int       `xml:"Cadence"`
-	SpeedInMetersPerSec float64   `xml:"Extensions>TPX>Speed"`
+	Time               time.Time  `xml:"Time"`
+	LatitudeInDegrees  float64    `xml:"LatitudeDegrees"`
+	LongitudeInDegrees float64    `xml:"LongitudeDegrees"`
+	AltitudeInMeters   float64    `xml:"AltitudeMeters"`
+	HeartRateInBpm     int        `xml:"HeartRateBpm>Value"`
+	Cadence            int        `xml:"Cadence"`
+	Extensions         Extensions `xml:"Extensions"`
+}
+
+type Extensions struct {
+	TrackPoint TPX `xml:"TPX"`
+	Lap        LX  `xml:"LX"`
+	Course     CX  `xml:"CX"`
+}
+
+type TPX struct {
+	Speed      float64 `xml:"Speed"`
+	RunCadence int     `xml:"RunCadence"`
+	Watts      int     `xml:"Watts"`
+}
+
+type LX struct {
+	AvgSpeed       float64 `xml:"AvgSpeed"`
+	MaxBikeCadence int     `xml:"MaxBikeCadence"`
+	AvgRunCadence  int     `xml:"AvgRunCadence"`
+	MaxRunCadence  int     `xml:"MaxRunCadence"`
+	Steps          int     `xml:"Steps"`
+	AvgWatts       int     `xml:"AvgWatts"`
+	MaxWatts       int     `xml:"MaxWatts"`
+}
+
+type CX struct {
+	AvgWatts int `xml:"AvgWatts"`
 }
 
 type Pace struct {
@@ -128,7 +154,7 @@ func (a *Activity) AveragePace() *Pace {
 	var nbs int = 0
 	for _, l := range a.Laps {
 		for _, p := range l.Track {
-			totals += p.SpeedInMetersPerSec
+			totals += p.Extensions.TrackPoint.Speed
 			nbs += 1
 		}
 	}
