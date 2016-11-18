@@ -45,8 +45,8 @@ type Lap struct {
 
 type Trackpoint struct {
 	Time               time.Time  `xml:"Time"`
-	LatitudeInDegrees  float64    `xml:"LatitudeDegrees"`
-	LongitudeInDegrees float64    `xml:"LongitudeDegrees"`
+	LatitudeInDegrees  float64    `xml:"Position>LatitudeDegrees"`
+	LongitudeInDegrees float64    `xml:"Position>LongitudeDegrees"`
 	AltitudeInMeters   float64    `xml:"AltitudeMeters"`
 	HeartRateInBpm     int        `xml:"HeartRateBpm>Value"`
 	Cadence            int        `xml:"Cadence"`
