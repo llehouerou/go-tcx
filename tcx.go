@@ -48,6 +48,7 @@ type Trackpoint struct {
 	LatitudeInDegrees  float64    `xml:"Position>LatitudeDegrees"`
 	LongitudeInDegrees float64    `xml:"Position>LongitudeDegrees"`
 	AltitudeInMeters   float64    `xml:"AltitudeMeters"`
+	DistanceInMeters   float64    `xml:"DistanceMeters"`
 	HeartRateInBpm     int        `xml:"HeartRateBpm>Value"`
 	Cadence            int        `xml:"Cadence"`
 	Extensions         Extensions `xml:"Extensions"`
